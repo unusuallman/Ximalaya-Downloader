@@ -1,5 +1,5 @@
 <h1 align="center">喜马拉雅下载工具</h1>
-<h4 align="center">[Ximalaya-Downloader](https://github.com/Diaoxiaozhang/Ximalaya-Downloader)</h4>
+<h4 align="center">Ximalaya-Downloader</h4>
 
 <div align="center">
 
