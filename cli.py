@@ -5,6 +5,7 @@ import requests
 import os
 import time
 import argparse
+from pathlib import Path
 from fake_useragent import UserAgent
 import tkinter as tk
 from tkinter import filedialog
@@ -13,7 +14,7 @@ import json
 ximalaya = main.Ximalaya()
 loop = asyncio.new_event_loop()
 parser = argparse.ArgumentParser()
-parser.add_argument('-s', '--sound', type=int, help='')
+parser.add_argument('-s', '--sound', type=int, help='Download a single sound by sound id')
 ua = UserAgent()
 
 def select_directory():
@@ -23,7 +24,7 @@ def select_directory():
     root.destroy()
     return directory_path
 
-if __name__ == "__main__":
+def main_cli():
     print("欢迎使用喜马拉雅下载器")
     cookie, path = ximalaya.analyze_config()
     if not cookie:
@@ -226,3 +227,108 @@ if __name__ == "__main__":
             break
         else:
             print("无效的选择，请重新输入。")
+
+
+def my_cli():
+    print("喜马拉雅下载器启动成功！")
+    logined = True
+    cookie, path = ximalaya.analyze_config()
+    headers = {
+        "user-agent": ua.random,
+        "cookie": cookie
+    }
+
+    while True:
+        print("请输入专辑ID或链接：")
+        input_album = input()
+        try:
+            album_id = int(input_album)
+        except ValueError:
+            try:
+                album_id = re.search(r"album/(?P<album_id>\d+)", input_album)
+                if album_id:
+                    album_id= album_id.group('album_id')
+                else:
+                    raise ValueError
+            except Exception:
+                print("输入有误，请重新输入！")
+                return
+        album_name, sounds = ximalaya.analyze_album(album_id)
+        if not sounds:
+            continue
+        album_type = ximalaya.judge_album(album_id, headers)
+        if album_type == 0:
+            print(f"成功解析免费专辑{album_id}，专辑名{album_name}，共{len(sounds)}个声音")
+        elif album_type == 1:
+            print(f"成功解析已购付费专辑{album_id}，专辑名{album_name}，共{len(sounds)}个声音")
+        elif album_type == 2:
+            if logined is True:
+                print(f"成功解析付费专辑{album_id}，专辑名{album_name}，但是当前登陆账号未购买此专辑或未开通vip")
+            else:
+                print(f"成功解析付费专辑{album_id}，专辑名{album_name}，但是当前未登陆账号，请登录再尝试下载")
+            continue
+        else:
+            continue
+        while True:
+            print("请选择要使用的功能：")
+            print("1. 下载整个专辑")
+            print("2. 下载专辑的部分声音")
+            print("3. 显示专辑内声音列表")
+            choice = input()
+            if choice == "1" or choice == "2":
+                if choice == "1":
+                    start = 1
+                    end = len(sounds)
+                else:
+                    while True:
+                        print("请输入要下载的声音范围，中间用空格隔开，如输入“1 10”则表示下载第1到第10个声音：")
+                        download_range = input()
+                        try:
+                            start, end = download_range.split(" ")
+                            start = int(start)
+                            end = int(end)
+                        except Exception:
+                            print("输入有误，请重新输入！")
+                            continue
+                        if start > end or start < 1 or end > len(sounds):
+                            print("输入有误，请重新输入！")
+                        else:
+                            break
+                if album_type == 0 or album_type == 1:
+                    while True:
+                        print("请选择是否要在下载的音频文件名中加入序号：")
+                        print("1. 加入序号")
+                        print("2. 不加序号")
+                        choice = input()
+                        if choice == "1":
+                            number = True
+                            break
+                        elif choice == "2":
+                            number = False
+                            break
+                        else:
+                            print("输入错误，请重新输入！")
+                    print("请选择您想要下载的音质：（直接回车默认为普通音质）")
+                    print("0. 低音质")
+                    print("1. 普通音质")
+                    print("2. 高音质（如果没有高音质则将下载普通音质）")
+                    choice = input()
+                    while True:
+                        if choice == "":
+                            choice = "1"
+                        if choice == "0" or choice == "1" or choice == "2":
+                            loop.run_until_complete(ximalaya.get_selected_sounds(sounds, album_name, start, end, headers, int(choice), number, path))
+                            break
+                        else:
+                            print("输入有误，请重新输入！")
+                break
+            elif choice == "3":
+                for sound in sounds:
+                    print(f"{sound['index']}. {sound['title']}")
+            else:
+                print("无效的选择，请重新输入。")
+
+
+if __name__ == "__main__":
+    main_cli()
+    

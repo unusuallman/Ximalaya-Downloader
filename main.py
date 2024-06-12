@@ -30,8 +30,8 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 path = ""
 ua = UserAgent()
-
-
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class Ximalaya:
     def __init__(self):
         self.default_headers = {
@@ -48,7 +48,7 @@ class Ximalaya:
             "trackQualityLevel": 2
         }
         try:
-            response = requests.get(url, headers=headers, params=params, timeout=15)
+            response = requests.get(url, headers=headers, params=params, timeout=15, verify=False)
         except Exception as e:
             print(colorama.Fore.RED + f'ID为{sound_id}的声音解析失败！')
             logger.debug(f'ID为{sound_id}的声音解析失败！')
@@ -93,7 +93,7 @@ class Ximalaya:
             "pageSize": 100
         }
         try:
-            response = requests.get(url, headers=self.default_headers, params=params, timeout=15)
+            response = requests.get(url, headers=self.default_headers, params=params, timeout=15,verify=False)
         except Exception as e:
             print(colorama.Fore.RED + f'ID为{album_id}的专辑解析失败！')
             logger.debug(f'ID为{album_id}的专辑解析失败！')
@@ -108,7 +108,7 @@ class Ximalaya:
                 "pageSize": 100
             }
             try:
-                response = requests.get(url, headers=self.default_headers, params=params, timeout=30)
+                response = requests.get(url, headers=self.default_headers, params=params, timeout=30,verify=False)
             except Exception as e:
                 print(colorama.Fore.RED + f'ID为{album_id}的专辑解析失败！')
                 logger.debug(f'ID为{album_id}的专辑解析失败！')
@@ -184,7 +184,7 @@ class Ximalaya:
         while retries > 0:
             try:
                 logger.debug(f'开始下载声音{sound_name}')
-                response = requests.get(sound_url, headers=self.default_headers, timeout=60)
+                response = requests.get(sound_url, headers=self.default_headers, timeout=60, verify=False)
                 break
             except Exception as e:
                 logger.debug(f'{sound_name}第{4 - retries}次下载失败！')
@@ -243,7 +243,8 @@ class Ximalaya:
         tasks = []
         global_retries = 0
         max_global_retries = 2
-        session = aiohttp.ClientSession()
+        conn = aiohttp.TCPConnector(ssl=False)
+        session = aiohttp.ClientSession(connector=conn)
         digits = len(str(len(sounds)))
         for i in range(start - 1, end):
             sound_id = sounds[i]["trackId"]
