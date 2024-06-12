@@ -55,10 +55,12 @@ class Ximalaya:
             logger.debug(traceback.format_exc())
             return False
         try:
-            not response.json()["trackInfo"]["isAuthorized"]
+            is_authorized = not response.json()["trackInfo"]["isAuthorized"]
         except KeyError:
             print(colorama.Fore.RED + f'ID为{sound_id}的声音解析失败，可能因为达到每日音频下载上限！')
             return False
+        if not is_authorized:
+            return 0  # 未购买或未登录vip账号
         if not response.json()["trackInfo"]["isAuthorized"]:
             return 0  # 未购买或未登录vip账号
         try:

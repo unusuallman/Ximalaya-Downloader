@@ -11,7 +11,7 @@ from tkinter import filedialog
 import json
 
 ximalaya = main.Ximalaya()
-loop = asyncio.get_event_loop()
+loop = asyncio.new_event_loop()
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--sound', type=int, help='')
 ua = UserAgent()
@@ -85,7 +85,11 @@ if __name__ == "__main__":
                 sound_id = int(_)
             except ValueError:
                 try:
-                    sound_id = re.search(r"sound/(?P<sound_id>\d+)", _).group('sound_id')
+                    sound_id = re.search(r"sound/(?P<sound_id>\d+)", _)
+                    if sound_id:
+                        sound_id = sound_id.group('sound_id')
+                    else:
+                        raise ValueError
                 except Exception:
                     print("输入有误，请重新输入！")
                     continue
@@ -98,23 +102,24 @@ if __name__ == "__main__":
             elif sound_info == 0 and not logined:
                 print(f"ID为{sound_id}的声音解析为vip声音或付费声音，请登录后再试！")
                 continue
-            print(f"成功解析声音{sound_info['name']}，请选择您要下载的音质：（直接回车默认为普通音质）")
-            print("0. 低音质")
-            print("1. 普通音质")
-            if sound_info[2] != "":
-                print("2. 高音质")
-            while True:
-                choice = input()
-                if choice == "":
-                    choice = "1"
-                if choice == "0" or choice == "1":
-                    ximalaya.get_sound(sound_info["name"], sound_info[int(choice)], path)
-                    break
-                elif choice == "2" and sound_info[2] != "":
-                    ximalaya.get_sound(sound_info["name"], sound_info[2], path)
-                    break
-                else:
-                    print("输入有误，请重新输入！")
+            elif isinstance(sound_info, dict):
+                print(f"成功解析声音{sound_info['name']}，请选择您要下载的音质：（直接回车默认为普通音质）")
+                print("0. 低音质")
+                print("1. 普通音质")
+                if sound_info[2] != "":
+                    print("2. 高音质")
+                while True:
+                    choice = input()
+                    if choice == "":
+                        choice = "1"
+                    if choice == "0" or choice == "1":
+                        ximalaya.get_sound(sound_info["name"], sound_info[int(choice)], path)
+                        break
+                    elif choice == "2" and sound_info[2] != "":
+                        ximalaya.get_sound(sound_info["name"], sound_info[2], path)
+                        break
+                    else:
+                        print("输入有误，请重新输入！")
         elif choice == "2":
             print("请输入专辑ID或链接：")
             input_album = input()
@@ -122,7 +127,11 @@ if __name__ == "__main__":
                 album_id = int(input_album)
             except ValueError:
                 try:
-                    album_id = re.search(r"album/(?P<album_id>\d+)", input_album).group('album_id')
+                    album_id = re.search(r"album/(?P<album_id>\d+)", input_album)
+                    if album_id:
+                        album_id= album_id.group('album_id')
+                    else:
+                        raise ValueError
                 except Exception:
                     print("输入有误，请重新输入！")
                     continue
