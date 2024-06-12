@@ -383,12 +383,14 @@ class Ximalaya:
                 option = webdriver.ChromeOptions()
                 option.add_experimental_option("detach", True)
                 option.add_experimental_option('excludeSwitches', ['enable-logging'])
-                driver = webdriver.Chrome(ChromeDriverManager().install(), options=option)
+                service = webdriver.ChromeService(ChromeDriverManager().install())
+                driver = webdriver.Chrome(service=service, options=option)
             elif choice == "2":
                 option = webdriver.EdgeOptions()
                 option.add_experimental_option("detach", True)
                 option.add_experimental_option('excludeSwitches', ['enable-logging'])
-                driver = webdriver.Edge(EdgeChromiumDriverManager().install(), options=option)
+                service = webdriver.EdgeService(EdgeChromiumDriverManager().install())
+                driver = webdriver.Edge(service=service, options=option)
             else:
                 return
             print("请在弹出的浏览器中登录喜马拉雅账号，登陆成功浏览器会自动关闭")
