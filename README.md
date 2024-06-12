@@ -8,8 +8,6 @@
 [![release](https://img.shields.io/github/release/Diaoxiaozhang/Ximalaya-Downloader.svg?style=flat&color=blue)](https://github.com/Diaoxiaozhang/Ximalaya-Downloader/releases)
 [![downloads](https://img.shields.io/github/downloads/Diaoxiaozhang/Ximalaya-Downloader/total?color=orange)](https://github.com/Diaoxiaozhang/Ximalaya-Downloader/releases)
 
-</div>
-
-### 说明
-
 从[ Diaoxiaozhang/Ximalaya-Downloader ](https://github.com/Diaoxiaozhang/Ximalaya-Downloader)处创建
+
+</div>
