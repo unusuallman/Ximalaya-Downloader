@@ -241,6 +241,7 @@ def my_cli():
     logined = True
     cookie, path = ximalaya.analyze_config()
     headers = {"user-agent": ua.random, "cookie": cookie}
+
     while True:
         print("请输入专辑ID或链接：")
         input_album = input()
@@ -266,8 +267,7 @@ def my_cli():
             print(f"成功解析已购付费专辑{album_id}，专辑名{album_name}，共{len(sounds)}个声音")
         elif album_type == 2:
             if logined is True:
-                print(f"成功解析付费专辑{album_id}，专辑名{
-                      album_name}，但是当前登陆账号未购买此专辑或未开通vip")
+                print(f"成功解析付费专辑{album_id}，专辑名{album_name}，但是当前登陆账号未购买此专辑或未开通vip")
             else:
                 print(f"成功解析付费专辑{album_id}，专辑名{album_name}，但是当前未登陆账号，请登录再尝试下载")
             continue
