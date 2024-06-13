@@ -4,7 +4,6 @@ import re
 import requests
 import os
 import time
-import argparse
 from pathlib import Path
 from fake_useragent import UserAgent
 import tkinter as tk
@@ -13,9 +12,8 @@ import json
 
 ximalaya = main.Ximalaya()
 loop = asyncio.new_event_loop()
-parser = argparse.ArgumentParser()
-parser.add_argument('-s', '--sound', type=int, help='Download a single sound by sound id')
 ua = UserAgent()
+
 
 def select_directory():
     root = tk.Tk()
@@ -23,6 +21,7 @@ def select_directory():
     directory_path = filedialog.askdirectory()
     root.destroy()
     return directory_path
+
 
 def main_cli():
     print("欢迎使用喜马拉雅下载器")
@@ -36,7 +35,8 @@ def main_cli():
     else:
         print('在config文件中未检测到有效的下载路径，将使用默认下载路径./download')
         path = './download'
-    response = requests.get(f"https://www.ximalaya.com/mobile-playpage/track/v3/baseInfo/{int(time.time() * 1000)}?device=web&trackId=188017958&trackQualityLevel=1",headers=ximalaya.default_headers)
+    response = requests.get(f"https://www.ximalaya.com/mobile-playpage/track/v3/baseInfo/{int(
+        time.time() * 1000)}?device=web&trackId=188017958&trackQualityLevel=1", headers=ximalaya.default_headers)
     if response.json()["ret"] == 927 and not username:
         print("检测到当前ip不在中国大陆，由于喜马拉雅官方限制，必须登录才能继续使用，将自动跳转到登录流程")
         ximalaya.login()
@@ -114,10 +114,12 @@ def main_cli():
                     if choice == "":
                         choice = "1"
                     if choice == "0" or choice == "1":
-                        ximalaya.get_sound(sound_info["name"], sound_info[int(choice)], path)
+                        ximalaya.get_sound(
+                            sound_info["name"], sound_info[int(choice)], path)
                         break
                     elif choice == "2" and sound_info[2] != "":
-                        ximalaya.get_sound(sound_info["name"], sound_info[2], path)
+                        ximalaya.get_sound(
+                            sound_info["name"], sound_info[2], path)
                         break
                     else:
                         print("输入有误，请重新输入！")
@@ -128,9 +130,10 @@ def main_cli():
                 album_id = int(input_album)
             except ValueError:
                 try:
-                    album_id = re.search(r"album/(?P<album_id>\d+)", input_album)
+                    album_id = re.search(
+                        r"album/(?P<album_id>\d+)", input_album)
                     if album_id:
-                        album_id= album_id.group('album_id')
+                        album_id = album_id.group('album_id')
                     else:
                         raise ValueError
                 except Exception:
@@ -143,12 +146,15 @@ def main_cli():
             if album_type == 0:
                 print(f"成功解析免费专辑{album_id}，专辑名{album_name}，共{len(sounds)}个声音")
             elif album_type == 1:
-                print(f"成功解析已购付费专辑{album_id}，专辑名{album_name}，共{len(sounds)}个声音")
+                print(f"成功解析已购付费专辑{album_id}，专辑名{
+                      album_name}，共{len(sounds)}个声音")
             elif album_type == 2:
                 if logined is True:
-                    print(f"成功解析付费专辑{album_id}，专辑名{album_name}，但是当前登陆账号未购买此专辑或未开通vip")
+                    print(f"成功解析付费专辑{album_id}，专辑名{
+                          album_name}，但是当前登陆账号未购买此专辑或未开通vip")
                 else:
-                    print(f"成功解析付费专辑{album_id}，专辑名{album_name}，但是当前未登陆账号，请登录再尝试下载")
+                    print(f"成功解析付费专辑{album_id}，专辑名{
+                          album_name}，但是当前未登陆账号，请登录再尝试下载")
                 continue
             else:
                 continue
@@ -200,7 +206,8 @@ def main_cli():
                             if choice == "":
                                 choice = "1"
                             if choice == "0" or choice == "1" or choice == "2":
-                                loop.run_until_complete(ximalaya.get_selected_sounds(sounds, album_name, start, end, headers, int(choice), number, path))
+                                loop.run_until_complete(ximalaya.get_selected_sounds(
+                                    sounds, album_name, start, end, headers, int(choice), number, path))
                                 break
                             else:
                                 print("输入有误，请重新输入！")
@@ -233,11 +240,7 @@ def my_cli():
     print("喜马拉雅下载器启动成功！")
     logined = True
     cookie, path = ximalaya.analyze_config()
-    headers = {
-        "user-agent": ua.random,
-        "cookie": cookie
-    }
-
+    headers = {"user-agent": ua.random, "cookie": cookie}
     while True:
         print("请输入专辑ID或链接：")
         input_album = input()
@@ -247,12 +250,12 @@ def my_cli():
             try:
                 album_id = re.search(r"album/(?P<album_id>\d+)", input_album)
                 if album_id:
-                    album_id= album_id.group('album_id')
+                    album_id = album_id.group('album_id')
                 else:
                     raise ValueError
             except Exception:
                 print("输入有误，请重新输入！")
-                return
+                continue
         album_name, sounds = ximalaya.analyze_album(album_id)
         if not sounds:
             continue
@@ -263,7 +266,8 @@ def my_cli():
             print(f"成功解析已购付费专辑{album_id}，专辑名{album_name}，共{len(sounds)}个声音")
         elif album_type == 2:
             if logined is True:
-                print(f"成功解析付费专辑{album_id}，专辑名{album_name}，但是当前登陆账号未购买此专辑或未开通vip")
+                print(f"成功解析付费专辑{album_id}，专辑名{
+                      album_name}，但是当前登陆账号未购买此专辑或未开通vip")
             else:
                 print(f"成功解析付费专辑{album_id}，专辑名{album_name}，但是当前未登陆账号，请登录再尝试下载")
             continue
@@ -317,7 +321,8 @@ def my_cli():
                         if choice == "":
                             choice = "1"
                         if choice == "0" or choice == "1" or choice == "2":
-                            loop.run_until_complete(ximalaya.get_selected_sounds(sounds, album_name, start, end, headers, int(choice), number, path))
+                            loop.run_until_complete(ximalaya.get_selected_sounds(
+                                sounds, album_name, start, end, headers, int(choice), number, path))
                             break
                         else:
                             print("输入有误，请重新输入！")
@@ -331,4 +336,3 @@ def my_cli():
 
 if __name__ == "__main__":
     main_cli()
-    
