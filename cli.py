@@ -50,12 +50,12 @@ def my_cli():
                 continue
             album_type = ximalaya.judge_album(album_id, headers)
             if album_type == 1 or album_type == 0:
-                print(f"专辑{album_name}解析成功！")
+                print(f"专辑 {album_name} 解析成功！")
             else:
-                print(f"专辑{album_name}解析失败！")
+                print(f"专辑 {album_name} 解析失败！")
                 continue
             loop.run_until_complete(ximalaya.get_selected_sounds(
-                sounds, album_name, 1, len(sounds), headers, 2, False, path))
+                sounds, album_name, 1, len(sounds), headers, 1, False, path))
     print("下载完成！")
     end_time = time.time()
     print(f"耗时：{end_time - star_time:.2f}秒")

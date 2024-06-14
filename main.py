@@ -30,6 +30,7 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 path = ""
 ua = UserAgent()
+
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 class Ximalaya:
@@ -130,7 +131,7 @@ class Ximalaya:
         }
         while retries > 0:
             try:
-                async with session.get(url, headers=headers, params=params, timeout=20, verify=False) as response:
+                async with session.get(url, headers=headers, params=params, timeout=20) as response:
                     response_json = json.loads(await response.text())
                     sound_name = response_json["trackInfo"]["title"]
                     encrypted_url_list = response_json["trackInfo"]["playUrlList"]
