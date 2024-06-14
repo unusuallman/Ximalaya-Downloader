@@ -26,6 +26,7 @@ def my_cli():
     cookie, path = ximalaya.analyze_config()
     headers = {"user-agent": ua.chrome, "cookie": cookie}
     links = list(Path(__file__).parent.glob("*.txt"))
+    links.remove(Path(__file__).parent / "requirements.txt")
     for link in links:
         with open(link, "r", encoding="utf-8") as f:
             urls = f.read().splitlines()
