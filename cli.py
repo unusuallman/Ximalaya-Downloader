@@ -27,6 +27,9 @@ def my_cli():
     headers = {"user-agent": ua.chrome, "cookie": cookie}
     links = list(Path(__file__).parent.glob("*.txt"))
     links.remove(Path(__file__).parent / "requirements.txt")
+    if not links:
+        print("请将专辑链接放入txt文件中！")
+        return
     for link in links:
         with open(link, "r", encoding="utf-8") as f:
             urls = f.read().splitlines()
@@ -56,3 +59,7 @@ def my_cli():
     print("下载完成！")
     end_time = time.time()
     print(f"耗时：{end_time - star_time:.2f}秒")
+
+
+if __name__ == "__main__":
+    my_cli()
