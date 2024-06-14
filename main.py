@@ -130,7 +130,7 @@ class Ximalaya:
         }
         while retries > 0:
             try:
-                async with session.get(url, headers=headers, params=params, timeout=20) as response:
+                async with session.get(url, headers=headers, params=params, timeout=20, verify=False) as response:
                     response_json = json.loads(await response.text())
                     sound_name = response_json["trackInfo"]["title"]
                     encrypted_url_list = response_json["trackInfo"]["playUrlList"]
