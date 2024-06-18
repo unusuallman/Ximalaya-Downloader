@@ -26,6 +26,11 @@ def my_cli():
     cookie, path = ximalaya.analyze_config()
     if not path:
         path = Path(__file__).parent / "Download"
+    if not cookie:
+        print("请配置cookie！")
+        print("请将cookie放入config.json文件中！")
+        print("cookie获取方式,请参考：https://github.com/Diaoxiaozhang/Ximalaya-Downloader ")
+        return
     headers = {"user-agent": ua.chrome, "cookie": cookie}
     links = list(Path(__file__).parent.glob("*.txt"))
     links.remove(Path(__file__).parent / "requirements.txt")
