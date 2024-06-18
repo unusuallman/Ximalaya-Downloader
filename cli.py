@@ -22,14 +22,13 @@ def select_directory():
 
 def my_cli():
     star_time = time.time()
-    print("开始下载！")
     cookie, path = ximalaya.analyze_config()
     if not path:
         path = Path(__file__).parent / "Download"
     if not cookie:
-        print("请配置cookie！")
+        print("cookie获取失败！")
         print("请将cookie放入config.json文件中！")
-        print("cookie获取方式,请参考：https://github.com/Diaoxiaozhang/Ximalaya-Downloader ")
+        print("cookie获取方式请参考：\nhttps://github.com/Diaoxiaozhang/Ximalaya-Downloader ")
         return
     headers = {"user-agent": ua.chrome, "cookie": cookie}
     links = list(Path(__file__).parent.glob("*.txt"))
@@ -70,4 +69,8 @@ def my_cli():
 
 
 if __name__ == "__main__":
+    print("========================================")
+    print("project: Ximalaya-Downloader")
+    print("star_time: ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     my_cli()
+    print("========================================")
