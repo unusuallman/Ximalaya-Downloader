@@ -24,6 +24,8 @@ def my_cli():
     star_time = time.time()
     print("开始下载！")
     cookie, path = ximalaya.analyze_config()
+    if not path:
+        path = Path(__file__).parent / "Download"
     headers = {"user-agent": ua.chrome, "cookie": cookie}
     links = list(Path(__file__).parent.glob("*.txt"))
     links.remove(Path(__file__).parent / "requirements.txt")
@@ -31,6 +33,7 @@ def my_cli():
         print("请将专辑链接放入txt文件中！")
         return
     for link in links:
+        path = Path(path) / link.stem
         with open(link, "r", encoding="utf-8") as f:
             urls = f.read().splitlines()
         for input_album in urls:
