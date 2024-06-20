@@ -21,14 +21,10 @@ def select_directory():
 
 
 def my_cli():
-    star_time = time.time()
     cookie, path = ximalaya.analyze_config()
     if not path:
         path = Path(__file__).parent / "Download"
         print("未设置下载路径！默认下载路径为当前目录下的Download文件夹！")
-    elif not Path(path).exists():
-        path = Path(__file__).parent / "Download"
-        print("下载路径不存在！默认下载路径为当前目录下的Download文件夹！")
     else:
         print(f"下载路径获取成功：{path}")
     if not cookie:
@@ -40,6 +36,7 @@ def my_cli():
     links = list(Path(__file__).parent.glob("*.txt"))
     links.remove(Path(__file__).parent / "requirements.txt")
     if not links:
+        print("未找到链接txt文件！")
         print("请将专辑链接放入txt文件中！")
         return
     for link in links:
@@ -51,7 +48,8 @@ def my_cli():
                 album_id = int(input_album)
             except ValueError:
                 try:
-                    album_id = re.search(r"album/(?P<album_id>\d+)", input_album)
+                    album_id = re.search(
+                        r"album/(?P<album_id>\d+)", input_album)
                     if not album_id:
                         raise ValueError
                     album_id = album_id.group('album_id')
@@ -70,13 +68,15 @@ def my_cli():
             loop.run_until_complete(ximalaya.get_selected_sounds(
                 sounds, album_name, 1, len(sounds), headers, 1, False, path))
     print("下载完成！")
-    end_time = time.time()
-    print(f"耗时：{end_time - star_time:.2f}秒")
 
 
 if __name__ == "__main__":
     print("========================================")
-    print("project: Ximalaya-Downloader")
-    print("star_time: ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+    print("任务: Ximalaya-Downloader")
+    star_time = time.time()
+    print("开始: ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
     my_cli()
+    print("结束: ", time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+    end_time = time.time()
+    print(f"耗时: {end_time - star_time:.2f}秒")
     print("========================================")
