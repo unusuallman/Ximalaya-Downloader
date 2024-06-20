@@ -25,6 +25,12 @@ def my_cli():
     cookie, path = ximalaya.analyze_config()
     if not path:
         path = Path(__file__).parent / "Download"
+        print("未设置下载路径！默认下载路径为当前目录下的Download文件夹！")
+    elif not Path(path).exists():
+        path = Path(__file__).parent / "Download"
+        print("下载路径不存在！默认下载路径为当前目录下的Download文件夹！")
+    else:
+        print(f"下载路径获取成功：{path}")
     if not cookie:
         print("cookie获取失败！")
         print("请将cookie放入config.json文件中！")
